@@ -1,0 +1,16 @@
+package libraryhtml
+
+import "github.com/carlosarguelles/jellygo/internal/library/domain"
+
+templ Create() {
+	<form hx-post="/libraries" hx-boost="true">
+		<label for="path">Path</label>
+		<input type="text" name="path" required/>
+		<select name="type" id="type">
+			for _, libraryType := range domain.GetLibraryTypes() {
+				<option value={ libraryType }>{ libraryType }</option>
+			}
+		</select>
+		<input type="submit" placeholder="submit"/>
+	</form>
+}

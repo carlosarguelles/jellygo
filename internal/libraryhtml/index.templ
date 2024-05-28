@@ -1,0 +1,19 @@
+package libraryhtml
+
+import "fmt"
+
+import "github.com/carlosarguelles/jellygo/internal/library/domain"
+
+templ Index(libs []*domain.Library) {
+	<div class="border p-2">
+		<ul>
+			for _, lib := range libs {
+				<li>
+					<a href={ templ.URL(fmt.Sprintf("/libraries/%d", lib.ID)) } hx-boost="true">
+						{ lib.Path }
+					</a>
+				</li>
+			}
+		</ul>
+	</div>
+}

@@ -1,0 +1,14 @@
+package libraryhtml
+
+import "strconv"
+
+import "github.com/carlosarguelles/jellygo/internal/library/domain"
+import "fmt"
+
+templ Show(lib domain.Library) {
+	<section>
+		<h2 class="text-xl font-bold">Library { strconv.Itoa(lib.ID) }: { lib.Path }</h2>
+		<h3>Entries: </h3>
+		<div hx-get={ fmt.Sprintf("/libraries/%d/movies", lib.ID) } hx-swap="innerHTML" hx-trigger="revealed"></div>
+	</section>
+}
