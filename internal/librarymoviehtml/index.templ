@@ -1,0 +1,11 @@
+package librarymoviehtml
+
+import moviedom "github.com/carlosarguelles/jellygo/internal/movie/domain"
+
+templ Index(movies []*moviedom.Movie) {
+	<ul>
+		for _, movie := range movies {
+			<li>{ movie.Title }, Path : { movie.Path }</li>
+		}
+	</ul>
+}
