@@ -26,10 +26,13 @@ func (u *CreateLibraryMetadataUseCase) Handle(ctx context.Context, lib *libdom.L
 				return err
 			}
 			movie := moviedom.Movie{
-				Path:        d.Name(),
-				Title:       movieInfo.Title,
-				ReleaseDate: movieInfo.ReleaseDate,
-				LibraryID:   lib.ID,
+				Path:      d.Name(),
+				LibraryID: lib.ID,
+				Meta: &moviedom.MovieMeta{
+					ID:          movieInfo.ID,
+					Title:       movieInfo.Title,
+					ReleaseDate: movieInfo.ReleaseDate,
+				},
 			}
 			err = u.movieRepository.Create(ctx, &movie)
 			if err != nil {

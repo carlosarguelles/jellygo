@@ -1,9 +1,14 @@
 package domain
 
-type Movie struct {
+type MovieMeta struct {
 	ReleaseDate string
-	Path        string
 	Title       string
-	LibraryID   int
 	ID          int
+}
+
+type Movie struct {
+	Meta      *MovieMeta
+	Path      string
+	LibraryID int
+	ID        int
 }

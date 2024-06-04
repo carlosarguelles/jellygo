@@ -19,11 +19,11 @@ func (api *TmdbMovieAPI) SearchMovieByName(name string) (*application.MovieInfo,
 		return nil, err
 	}
 	if len(movieSearchResults.Results) > 0 {
-		title := movieSearchResults.Results[0].Title
-		releaseDate := movieSearchResults.Results[0].ReleaseDate
+		apiMovie := movieSearchResults.Results[0]
 		return &application.MovieInfo{
-			Title:       title,
-			ReleaseDate: releaseDate,
+			ID:          apiMovie.ID,
+			Title:       apiMovie.Title,
+			ReleaseDate: apiMovie.ReleaseDate,
 		}, nil
 	}
 	return nil, nil

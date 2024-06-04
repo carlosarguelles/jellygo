@@ -5,7 +5,7 @@ import moviedom "github.com/carlosarguelles/jellygo/internal/movie/domain"
 templ Index(movies []*moviedom.Movie) {
 	<ul>
 		for _, movie := range movies {
-			<li>{ movie.Title }, Path : { movie.Path }</li>
+			<li>{ movie.Meta.Title }, Path : { movie.Path }</li>
 		}
 	</ul>
 }

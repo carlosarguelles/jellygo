@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 
 	"github.com/carlosarguelles/jellygo/internal/library/domain"
 	moviedom "github.com/carlosarguelles/jellygo/internal/movie/domain"
@@ -13,7 +14,7 @@ type SqliteLibraryRepository struct {
 }
 
 func (repo *SqliteLibraryRepository) GetAll(ctx context.Context) ([]*domain.Library, error) {
-	rows, err := repo.db.QueryContext(ctx, "select id, path, \"type\" from libraries")
+	rows, err := repo.db.QueryContext(ctx, "select id, path, type from libraries")
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +31,7 @@ func (repo *SqliteLibraryRepository) GetAll(ctx context.Context) ([]*domain.Libr
 }
 
 func (repo *SqliteLibraryRepository) GetByID(ctx context.Context, id int) (*domain.Library, error) {
-	row := repo.db.QueryRowContext(ctx, "select id, path, \"type\" from libraries where id = ?", id)
+	row := repo.db.QueryRowContext(ctx, "select id, path, type from libraries where id = ?", id)
 	if row.Err() != nil {
 		return nil, row.Err()
 	}
@@ -49,8 +50,7 @@ func (repo *SqliteLibraryRepository) GetByIDWithMovies(ctx context.Context, id i
                lib.type,
                mov.id,
                mov.path,
-               mov.title,
-               mov.release_date
+               mov.meta
           from libraries lib
          inner join movies mov
             on mov.library_id = lib.id
@@ -65,18 +65,22 @@ func (repo *SqliteLibraryRepository) GetByIDWithMovies(ctx context.Context, id i
 	movies := make([]*moviedom.Movie, 0)
 	for rows.Next() {
 		var movie moviedom.Movie
+		var metaStr []byte
 		if err := rows.Scan(
 			&lib.ID,
 			&lib.Path,
 			&lib.Type,
 			&movie.ID,
 			&movie.Path,
-			&movie.Title,
-			&movie.ReleaseDate,
+			&metaStr,
 		); err != nil {
 			return nil, err
 		}
 		movie.LibraryID = lib.ID
+		err := json.Unmarshal(metaStr, &movie.Meta)
+		if err != nil {
+			return nil, err
+		}
 		movies = append(movies, &movie)
 	}
 	lib.Movies = movies
