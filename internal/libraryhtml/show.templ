@@ -7,7 +7,10 @@ import "fmt"
 
 templ Show(lib domain.Library) {
 	<section>
-		<h2 class="text-xl font-bold">Library { strconv.Itoa(lib.ID) }: { lib.Path }</h2>
+		<div class="flex items-center gap-2">
+			<h2 class="text-xl font-bold">Library { strconv.Itoa(lib.ID) }: { lib.Name }</h2>
+			<button hx-patch={ fmt.Sprintf("/libraries/%d", lib.ID) } hx-target="body">Refresh</button>
+		</div>
 		<h3>Entries: </h3>
 		<div hx-get={ fmt.Sprintf("/libraries/%d/movies", lib.ID) } hx-swap="innerHTML" hx-trigger="revealed"></div>
 	</section>

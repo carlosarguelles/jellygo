@@ -43,6 +43,14 @@ func (lc *HtmlLibraryController) Save(c echo.Context) error {
 	return nil
 }
 
+func (lc *HtmlLibraryController) Refresh(c echo.Context) error {
+	libraryIDStr := c.Param("libraryID")
+	libraryID, _ := strconv.Atoi(libraryIDStr)
+	lib, _ := lc.libraryRepository.GetByID(c.Request().Context(), libraryID)
+	lc.libraryQueue.Add(*lib)
+	return Show(*lib).Render(c.Request().Context(), c.Response().Writer)
+}
+
 func NewHtmlLibraryController(repository application.LibraryRepository, libraryQueue *infrastructure.LibraryQueue) *HtmlLibraryController {
 	return &HtmlLibraryController{repository, libraryQueue}
 }
