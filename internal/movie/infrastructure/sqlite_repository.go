@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 
 	"github.com/carlosarguelles/jellygo/internal/movie/domain"
 )
@@ -41,10 +42,35 @@ func (repo *SqliteMovieRepository) GetByID(ctx context.Context, id int) (*domain
 	}
 	var movie domain.Movie
 	var metaStr []byte
-	if err := row.Scan(&movie.ID, &movie.Path, &movie.LibraryID, &metaStr); err != nil {
+	err := row.Scan(&movie.ID, &movie.Path, &movie.LibraryID, &metaStr)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
-	err := json.Unmarshal(metaStr, &movie.Meta)
+	err = json.Unmarshal(metaStr, &movie.Meta)
+	if err != nil {
+		return nil, err
+	}
+	return &movie, nil
+}
+
+func (repo *SqliteMovieRepository) GetByPath(ctx context.Context, path string) (*domain.Movie, error) {
+	row := repo.db.QueryRowContext(ctx, "select id, path, library_id, meta from movies where path = ?", path)
+	if row.Err() != nil {
+		return nil, row.Err()
+	}
+	var movie domain.Movie
+	var metaStr []byte
+	err := row.Scan(&movie.ID, &movie.Path, &movie.LibraryID, &metaStr)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	err = json.Unmarshal(metaStr, &movie.Meta)
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +94,33 @@ func (repo *SqliteMovieRepository) Create(ctx context.Context, movie *domain.Mov
 	}
 	row.Scan(&movie.ID)
 	return nil
+}
+
+func (repo *SqliteMovieRepository) Update(ctx context.Context, movie *domain.Movie) error {
+	row := repo.db.QueryRowContext(
+		ctx,
+		"select id from movies where id = ?",
+		movie.ID,
+	)
+	if err := row.Scan(&movie.ID); err != nil {
+		return err
+	}
+	metaJSON, err := json.Marshal(movie.Meta)
+	if err != nil {
+		return err
+	}
+	row = repo.db.QueryRowContext(
+		ctx,
+		"update movies set meta = ? where movies.id = ?",
+		metaJSON,
+		movie.ID,
+	)
+	return row.Err()
+}
+
+func (repo *SqliteMovieRepository) Delete(ctx context.Context, id int) error {
+	_, err := repo.db.ExecContext(ctx, "delete from movies where movies.id = ?", id)
+	return err
 }
 
 func NewSqliteMovieRepository(db *sql.DB) *SqliteMovieRepository {
