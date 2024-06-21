@@ -8,6 +8,7 @@ const (
 )
 
 type Library struct {
+	Name   string
 	Path   string
 	Type   string
 	Movies []*moviedom.Movie
@@ -23,6 +24,6 @@ func GetLibraryTypes() []string {
 	return []string{TypeMovies, TypeTVShows}
 }
 
-func NewLibrary(path string, _type string) *Library {
-	return &Library{Path: path, Type: _type}
+func NewLibrary(path string, _type string, name string) *Library {
+	return &Library{Path: path, Type: _type, Name: name}
 }

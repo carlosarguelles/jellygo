@@ -6,6 +6,7 @@ templ Create() {
 	<form hx-post="/libraries" hx-boost="true">
 		<label for="path">Path</label>
 		<input type="text" name="path" required/>
+		<input type="text" name="name" required/>
 		<select name="type" id="type">
 			for _, libraryType := range domain.GetLibraryTypes() {
 				<option value={ libraryType }>{ libraryType }</option>

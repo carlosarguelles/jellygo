@@ -14,7 +14,7 @@ type SqliteLibraryRepository struct {
 }
 
 func (repo *SqliteLibraryRepository) GetAll(ctx context.Context) ([]*domain.Library, error) {
-	rows, err := repo.db.QueryContext(ctx, "select id, path, type from libraries")
+	rows, err := repo.db.QueryContext(ctx, "select id, path, type, name from libraries")
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func (repo *SqliteLibraryRepository) GetAll(ctx context.Context) ([]*domain.Libr
 	libs := make([]*domain.Library, 0)
 	for rows.Next() {
 		var lib domain.Library
-		if err := rows.Scan(&lib.ID, &lib.Path, &lib.Type); err != nil {
+		if err := rows.Scan(&lib.ID, &lib.Path, &lib.Type, &lib.Name); err != nil {
 			return nil, err
 		}
 		libs = append(libs, &lib)
@@ -31,12 +31,12 @@ func (repo *SqliteLibraryRepository) GetAll(ctx context.Context) ([]*domain.Libr
 }
 
 func (repo *SqliteLibraryRepository) GetByID(ctx context.Context, id int) (*domain.Library, error) {
-	row := repo.db.QueryRowContext(ctx, "select id, path, type from libraries where id = ?", id)
+	row := repo.db.QueryRowContext(ctx, "select id, path, type, name from libraries where id = ?", id)
 	if row.Err() != nil {
 		return nil, row.Err()
 	}
 	var lib domain.Library
-	if err := row.Scan(&lib.ID, &lib.Path, &lib.Type); err != nil {
+	if err := row.Scan(&lib.ID, &lib.Path, &lib.Type, &lib.Name); err != nil {
 		return nil, err
 	}
 	return &lib, nil
@@ -48,6 +48,7 @@ func (repo *SqliteLibraryRepository) GetByIDWithMovies(ctx context.Context, id i
 		`select lib.id,
                lib.path,
                lib.type,
+               lib.name,
                mov.id,
                mov.path,
                mov.meta
@@ -70,6 +71,7 @@ func (repo *SqliteLibraryRepository) GetByIDWithMovies(ctx context.Context, id i
 			&lib.ID,
 			&lib.Path,
 			&lib.Type,
+			&lib.Name,
 			&movie.ID,
 			&movie.Path,
 			&metaStr,
@@ -88,7 +90,7 @@ func (repo *SqliteLibraryRepository) GetByIDWithMovies(ctx context.Context, id i
 }
 
 func (repo *SqliteLibraryRepository) Create(ctx context.Context, library *domain.Library) error {
-	row := repo.db.QueryRowContext(ctx, "insert into libraries (path, type) values (?, ?) returning id", library.Path, library.Type)
+	row := repo.db.QueryRowContext(ctx, "insert into libraries (path, type, name) values (?, ?, ?) returning id", library.Path, library.Type, library.Name)
 	if row.Err() != nil {
 		return row.Err()
 	}

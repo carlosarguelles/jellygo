@@ -34,8 +34,9 @@ func (lc *HtmlLibraryController) Create(c echo.Context) error {
 
 func (lc *HtmlLibraryController) Save(c echo.Context) error {
 	path := c.FormValue("path")
+	name := c.FormValue("name")
 	typeStr := c.FormValue("type")
-	lib := domain.NewLibrary(path, typeStr)
+	lib := domain.NewLibrary(path, typeStr, name)
 	lc.libraryRepository.Create(c.Request().Context(), lib)
 	lc.libraryQueue.Add(*lib)
 	c.Response().Header().Add("HX-Location", fmt.Sprintf("/libraries/%d", lib.ID))
