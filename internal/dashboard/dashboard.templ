@@ -1,0 +1,12 @@
+package dashboard
+
+templ Dashboard() {
+	<div class="flex flex-col h-full">
+		<div class="sticky z-40 top-0 border-b bg-background/30 backdrop-blur-md">
+			<div class="h-16 p-2 flex items-center justify-center">
+				<h1 class="font-bold text-xl">Jellygo</h1>
+			</div>
+		</div>
+		<div class="flex-1 space-y-4" hx-get="/libraries" hx-swap="innerHTML" hx-trigger="revealed"></div>
+	</div>
+}
