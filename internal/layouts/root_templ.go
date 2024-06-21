@@ -23,7 +23,7 @@ func Root(content templ.Component) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"https://unpkg.com/htmx.org@1.9.12\"></script><link href=\"/static/assets/app.css\" rel=\"stylesheet\"><title>My app</title></head><body>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"https://unpkg.com/htmx.org@1.9.12\"></script><link href=\"/static/assets/app.css\" rel=\"stylesheet\"><title>Jellygo</title></head><body class=\"h-dvh\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
