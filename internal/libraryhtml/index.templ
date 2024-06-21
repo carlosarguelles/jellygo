@@ -3,17 +3,20 @@ package libraryhtml
 import "fmt"
 
 import "github.com/carlosarguelles/jellygo/internal/library/domain"
+import "github.com/carlosarguelles/jellygo/internal/icons"
 
 templ Index(libs []*domain.Library) {
-	<div class="border p-2">
-		<ul>
-			for _, lib := range libs {
-				<li>
-					<a href={ templ.URL(fmt.Sprintf("/libraries/%d", lib.ID)) } hx-boost="true">
-						{ lib.Path }
-					</a>
-				</li>
-			}
-		</ul>
-	</div>
+	for _, lib := range libs {
+		<section class="overflow-hidden">
+			<div class="flex items-center px-4 py-2">
+				<a href={ templ.URL(fmt.Sprintf("/libraries/%d", lib.ID)) } hx-boost="true">
+					<h2 class="font-bold">
+						{ lib.Name }
+					</h2>
+				</a>
+				@icons.ChevronRight()
+			</div>
+			<div class="overflow-auto no-scrollbar" hx-get={ fmt.Sprintf("/libraries/%d/movies", lib.ID) } hx-swap="innerHTML" hx-trigger="load"></div>
+		</section>
+	}
 }

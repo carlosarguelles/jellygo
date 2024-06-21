@@ -1,11 +1,17 @@
 package librarymoviehtml
 
+import "fmt"
+
 import moviedom "github.com/carlosarguelles/jellygo/internal/movie/domain"
 
 templ Index(movies []*moviedom.Movie) {
-	<ul>
+	<div class="inline-flex gap-4 px-4">
 		for _, movie := range movies {
-			<li>{ movie.Meta.Title }, Path : { movie.Path }</li>
+			<a href={ templ.URL(fmt.Sprintf("/libraries/%d/movies/%d", movie.LibraryID, movie.ID)) } hx-boost="true">
+				<div class="w-[300px] aspect-video bg-gray-100 rounded-md border overflow-hidden hover:brightness-75 cursor-pointer">
+					<img class="object-cover" src={ fmt.Sprintf("/static/images/%s", movie.Meta.Pictures.Banner) } alt=""/>
+				</div>
+			</a>
 		}
-	</ul>
+	</div>
 }
